@@ -1,5 +1,10 @@
 import React, { useState } from 'react';
 import './App.css';
+import Asistente from './Asistente'; 
+
+// --- TU CLAVE API ---
+const GEMINI_API_KEY = "AIzaSyAIvRhIFlV1x_XzpJmLIfqdm2t0A6QNwlw"; 
+// --------------------
 
 function App() {
   const [busqueda, setBusqueda] = useState('');
@@ -8,12 +13,12 @@ function App() {
   const [altoContraste, setAltoContraste] = useState(true);
   const [cargando, setCargando] = useState(false);
   const [menuAbierto, setMenuAbierto] = useState(false);
+  const [modeloDetectado, setModeloDetectado] = useState(null); // Aquí guardaremos el nombre real
   
   const [modoVista, setModoVista] = useState('inicio'); 
   const [listaItems, setListaItems] = useState([]);
   const [tituloSeccion, setTituloSeccion] = useState('');
 
-  // --- CONFIGURACIÓN DE MEDIOS ---
   const menuOpciones = {
     prensa: [
       { nombre: "El País", rss: "https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/portada" },
@@ -30,75 +35,129 @@ function App() {
     ]
   };
 
-  // --- NUEVO BUSCADOR WIKIPEDIA INTELIGENTE ---
-  const buscarEnWikipedia = async () => {
-    if (!busqueda) return;
-    setCargando(true);
-    setModoVista('wikipedia');
-    setMenuAbierto(false);
-    
-    // 1. PRIMERO BUSCAMOS COINCIDENCIAS (SEARCH)
-    const urlBusqueda = `https://es.wikipedia.org/w/api.php?action=query&list=search&srsearch=${busqueda}&format=json&origin=*`;
+  const leerRespuesta = (texto) => {
+    window.speechSynthesis.cancel(); 
+    const voz = new SpeechSynthesisUtterance(texto);
+    voz.lang = 'es-ES';
+    voz.rate = 0.9; 
+    window.speechSynthesis.speak(voz);
+  };
 
+  // --- PASO 1: DETECTAR QUÉ MODELO TIENES ACTIVADO ---
+  const encontrarModelo = async () => {
+      try {
+          console.log("Buscando modelos disponibles...");
+          // Pedimos la lista a Google
+          const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${GEMINI_API_KEY}`);
+          const data = await response.json();
+          
+          if (!data.models) throw new Error("No pude obtener la lista de modelos.");
+
+          // Buscamos uno que sirva para generar texto ('generateContent')
+          // Preferimos los 'gemini' y evitamos los 'vision' si es solo texto
+          const modeloValido = data.models.find(m => 
+              m.name.includes('gemini') && 
+              m.supportedGenerationMethods.includes('generateContent')
+          );
+
+          if (modeloValido) {
+              console.log("Modelo encontrado:", modeloValido.name);
+              return modeloValido.name.replace('models/', ''); // Limpiamos el nombre
+          } else {
+              throw new Error("Ningún modelo compatible encontrado.");
+          }
+      } catch (error) {
+          console.error(error);
+          return 'gemini-pro'; // Si falla la detección, usamos este por defecto
+      }
+  };
+
+  // --- PASO 2: USAR ESE MODELO ---
+  const consultarGemini = async (pregunta) => {
     try {
-      const resBusqueda = await fetch(urlBusqueda);
-      const dataBusqueda = await resBusqueda.json();
+        let modeloAUsar = modeloDetectado;
 
-      if (dataBusqueda.query.search.length === 0) {
-        setContenido("<p>NO SE ENCONTRÓ NADA. INTENTA OTRA PALABRA.</p>");
-        setCargando(false);
-        return;
-      }
+        // Si es la primera vez, buscamos el modelo
+        if (!modeloAUsar) {
+            modeloAUsar = await encontrarModelo();
+            setModeloDetectado(modeloAUsar);
+        }
 
-      // Cogemos el título del primer resultado (el más relevante)
-      const mejorResultado = dataBusqueda.query.search[0].title;
+        console.log(`Usando modelo: ${modeloAUsar}`);
 
-      // 2. AHORA PEDIMOS EL CONTENIDO DE ESE TÍTULO EXACTO
-      const urlContenido = `https://es.wikipedia.org/w/api.php?action=query&prop=extracts&exintro&explaintext&titles=${encodeURIComponent(mejorResultado)}&format=json&origin=*`;
-      
-      const resContenido = await fetch(urlContenido);
-      const dataContenido = await resContenido.json();
-      const paginas = dataContenido.query.pages;
-      const pageId = Object.keys(paginas)[0];
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${modeloAUsar}:generateContent?key=${GEMINI_API_KEY}`;
+        
+        const ahora = new Date();
+        const fechaActual = now => now.toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        const horaActual = now => now.toLocaleTimeString('es-ES', {hour: '2-digit', minute:'2-digit'});
+        const contexto = `Hoy es ${fechaActual(ahora)} y son las ${horaActual(ahora)}.`;
 
-      if (pageId === "-1") {
-        setContenido("<p>ERROR AL CARGAR EL ARTÍCULO.</p>");
-      } else {
-        // Formateamos un poco el texto para que se lea mejor
-        const texto = paginas[pageId].extract;
-        const html = `
-          <h2>${mejorResultado.toUpperCase()}</h2>
-          <hr/>
-          <div style="line-height: 1.6; font-size: 1.1em;">
-            ${texto.split('\n').map(p => `<p>${p}</p>`).join('')}
-          </div>
+        const prompt = `
+          Contexto: ${contexto}
+          Eres un asistente útil y amable.
+          Usuario: "${pregunta}"
+          Instrucciones: Responde en texto plano (sin símbolos raros), breve (máx 3 frases). Si es hora/fecha usa contexto. Si es fútbol/tiendas di que no tienes internet en vivo.
         `;
-        setContenido(html);
-      }
+        
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+        });
+
+        const data = await response.json();
+
+        if (data.error) throw new Error(data.error.message);
+        
+        if (data.candidates && data.candidates[0].content) {
+            let respuestaIA = data.candidates[0].content.parts[0].text;
+            respuestaIA = respuestaIA.replace(/\*/g, '').replace(/#/g, '');
+
+            setContenido(`
+                <h2>🤖 Respuesta (${modeloAUsar}):</h2>
+                <hr/>
+                <p style="font-size: 1.2em; line-height: 1.6;">${respuestaIA}</p>
+            `);
+            leerRespuesta(respuestaIA);
+        } else {
+            throw new Error("Sin respuesta.");
+        }
 
     } catch (error) {
-      setContenido("<p>ERROR DE CONEXIÓN CON WIKIPEDIA.</p>");
+        setContenido(`
+            <h3>⚠️ ERROR</h3>
+            <p>Google ha rechazado la conexión.</p>
+            <p style="color:yellow; font-size:0.7em">${error.message}</p>
+        `);
+        leerRespuesta("Error de conexión con Google.");
     }
     setCargando(false);
   };
 
-  // --- CARGADOR DE NOTICIAS RSS ---
+  const procesarPregunta = async (textoEntrada = null) => {
+    const consulta = textoEntrada || busqueda;
+    if (!consulta) return;
+
+    setCargando(true);
+    setModoVista('wikipedia'); 
+    setMenuAbierto(false);
+    
+    await consultarGemini(consulta);
+  };
+
+  // --- CARGADORES ---
   const cargarFuente = async (fuente) => {
     setMenuAbierto(false);
-
     if (fuente.tipo === 'esquelas_parser') {
       cargarEsquelas();
       return;
     }
-
     setCargando(true);
     setModoVista('lista');
     setTituloSeccion(fuente.nombre);
     setListaItems([]);
-
     const rssUrl = `${fuente.rss}?t=${new Date().getTime()}`;
     const proxyUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
-
     try {
         const respuesta = await fetch(proxyUrl);
         const datos = await respuesta.json();
@@ -119,32 +178,25 @@ function App() {
     setCargando(false);
   };
 
-  // --- CARGADOR DE ESQUELAS ---
   const cargarEsquelas = async () => {
     setCargando(true);
     setModoVista('lista');
     setTituloSeccion("ESQUELAS CANTABRIA");
     setListaItems([]);
-
     const targetUrl = 'https://www.esquelasdecantabria.com/index.php/esquelas';
     const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}&timestamp=${Date.now()}`;
-
     try {
       const response = await fetch(proxyUrl);
       const data = await response.json();
-      
       if (data.contents) {
         const parser = new DOMParser();
         const doc = parser.parseFromString(data.contents, 'text/html');
-        
         const filas = Array.from(doc.querySelectorAll('tr'));
-        
         const esquelas = filas.map(fila => {
             const enlace = fila.querySelector('a');
             if (enlace) {
                 const texto = enlace.innerText.trim();
                 const href = enlace.getAttribute('href');
-                
                 if (texto.length > 5 && !texto.includes('Imprimir') && !texto.includes('Email') && !texto.includes('Esquelas')) {
                     return {
                         titulo: "† " + texto.toUpperCase(),
@@ -155,14 +207,8 @@ function App() {
             }
             return null;
         }).filter(item => item !== null);
-
         const unicos = esquelas.filter((v,i,a)=>a.findIndex(v2=>(v2.titulo===v.titulo))===i);
-
-        if (unicos.length > 0) {
-            setListaItems(unicos);
-        } else {
-            setListaItems([{titulo: "NO SE ENCONTRARON ESQUELAS HOY", contenido: "", esEsquela: true}]);
-        }
+        setListaItems(unicos.length > 0 ? unicos : [{titulo: "NO SE ENCONTRARON ESQUELAS HOY", contenido: "", esEsquela: true}]);
       }
     } catch (error) {
       setContenido("<p>ERROR AL CARGAR ESQUELAS.</p>");
@@ -170,15 +216,12 @@ function App() {
     setCargando(false);
   };
 
-  // --- DETALLE ESQUELA ---
   const cargarDetalleEsquela = async (item) => {
       if(!item.link) return;
       setCargando(true);
       setModoVista('lectura');
       setContenido("<h3>CARGANDO INFORMACIÓN...</h3>");
-
       const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(item.link)}&timestamp=${Date.now()}`;
-
       try {
           const response = await fetch(proxyUrl);
           const data = await response.json();
@@ -186,37 +229,18 @@ function App() {
             const parser = new DOMParser();
             const doc = parser.parseFromString(data.contents, 'text/html');
             const cuerpo = doc.querySelector('.item-page') || doc.querySelector('[itemprop="articleBody"]') || doc.body;
-            
             const basura = cuerpo.querySelectorAll('script, style, iframe, button, .icons, .actions, .pagenav');
             basura.forEach(b => b.remove());
-
             const enlaces = cuerpo.querySelectorAll('a');
             enlaces.forEach(a => {
                 const span = document.createElement('span');
                 span.innerText = a.innerText;
                 a.parentNode.replaceChild(span, a);
             });
-
-            const textoLimpio = cuerpo.innerHTML;
-
-            setContenido(`
-                <div class="tarjeta-esquela">
-                    <h2 class="nombre-difunto">${item.titulo}</h2>
-                    <hr class="separador-esquela"/>
-                    <div class="datos-esquela">
-                        ${textoLimpio}
-                    </div>
-                </div>
-            `);
+            setContenido(`<div class="tarjeta-esquela"><h2 class="nombre-difunto">${item.titulo}</h2><hr class="separador-esquela"/><div class="datos-esquela">${cuerpo.innerHTML}</div></div>`);
           }
       } catch (error) {
-          setContenido(`
-            <div class="tarjeta-esquela">
-                <h3>${item.titulo}</h3>
-                <p>No se pudo cargar el detalle automáticamente.</p>
-                <a href="${item.link}" target="_blank" style="color:yellow; font-size:1.5rem; display:block; margin-top:20px;">VER EN WEB</a>
-            </div>
-          `);
+          setContenido(`<div class="tarjeta-esquela"><h3>${item.titulo}</h3><p>Error al cargar.</p><a href="${item.link}" target="_blank" style="color:yellow; font-size:1.5rem; display:block; margin-top:20px;">VER EN WEB</a></div>`);
       }
       setCargando(false);
   };
@@ -230,7 +254,7 @@ function App() {
       }
   };
 
-  const leerVoz = () => {
+  const leerPantalla = () => {
     window.speechSynthesis.cancel();
     const div = document.createElement("div");
     if(modoVista === 'lista') {
@@ -240,11 +264,7 @@ function App() {
     } else {
         div.innerHTML = contenido;
     }
-    const textoLimpio = div.textContent || div.innerText || "";
-    const voz = new SpeechSynthesisUtterance(textoLimpio);
-    voz.lang = 'es-ES';
-    voz.rate = 0.9; 
-    window.speechSynthesis.speak(voz);
+    leerRespuesta(div.textContent || div.innerText || "");
   };
   
   const callarVoz = () => { window.speechSynthesis.cancel(); }
@@ -299,27 +319,37 @@ function App() {
       </aside>
 
       <main className="area-principal">
+        
         {(modoVista === 'inicio' || modoVista === 'wikipedia') && (
-          <div className="buscador-caja">
-            <input type="text" placeholder="BUSCAR..." value={busqueda} onChange={(e) => setBusqueda(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && buscarEnWikipedia()}/>
-            <button className="btn-buscar" onClick={buscarEnWikipedia}>BUSCAR</button>
-          </div>
+          <>
+            <div className="buscador-caja">
+              <input type="text" placeholder="ESCRIBIR..." value={busqueda} onChange={(e) => setBusqueda(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && procesarPregunta()}/>
+              <button className="btn-buscar" onClick={() => procesarPregunta()}>BUSCAR</button>
+            </div>
+            
+            <Asistente alEscuchar={(texto) => procesarPregunta(texto)} />
+          </>
         )}
 
         {((contenido && modoVista !== 'inicio') || (listaItems.length > 0 && modoVista === 'lista')) && (
           <div className="panel-voz">
-             <button onClick={leerVoz}>🔊 LEER</button>
+             <button onClick={leerPantalla}>🔊 LEER PANTALLA</button>
              <button onClick={callarVoz}>🤫 PARAR</button>
           </div>
         )}
 
         <div className="visor-texto" style={{ fontSize: `${tamanoLetra}px` }}>
-          {cargando && <p className="mensaje-estado">CARGANDO...</p>}
+          {cargando && <p className="mensaje-estado">PENSANDO...</p>}
           
           {!cargando && modoVista === 'inicio' && (
              <div className="bienvenida">
                <p>HOLA.</p>
-               <p>USA EL <strong>MENÚ ARRIBA A LA IZQUIERDA</strong> PARA LEER NOTICIAS O ESQUELAS.</p>
+               <p>PUEDES PREGUNTARME LO QUE QUIERAS.</p>
+               <ul style={{textAlign:'left', display:'inline-block'}}>
+                   <li>"¿Qué tiempo hace?"</li>
+                   <li>"¿Cuándo empezó la Guerra Civil?"</li>
+                   <li>"¿A qué hora cierra el súper?"</li>
+               </ul>
              </div>
           )}
 
