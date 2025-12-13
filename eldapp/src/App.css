@@ -1,0 +1,258 @@
+/* =========================================
+   1. CONFIGURACIÓN BASE
+   ========================================= */
+* { 
+  box-sizing: border-box; 
+}
+
+body { 
+  margin: 0; 
+  font-family: 'Verdana', 'Arial', sans-serif; 
+  overflow-x: hidden; 
+  text-transform: uppercase; 
+}
+
+/* Permitimos minúsculas en textos largos para facilitar lectura */
+.visor-texto div, .cuerpo-noticia, .visor-texto p, .datos-esquela {
+  text-transform: none; 
+}
+
+/* Títulos y botones siempre en mayúsculas */
+.btn-titular, h1, h2, h3, h4, button, input, .nombre-difunto {
+  text-transform: uppercase;
+}
+
+/* Contenedor Principal */
+.app-contenedor {
+  min-height: 100vh;
+  padding-top: 100px; /* Hueco para la barra fija */
+  transition: background 0.3s;
+}
+
+/* =========================================
+   2. COLORES Y TEMAS
+   ========================================= */
+/* MODO DÍA */
+.modo-dia { 
+  background-color: #f4f4f4; 
+  color: #000; 
+}
+.modo-dia .barra-superior { 
+  background-color: #e0e0e0; 
+  border-bottom: 5px solid #000; 
+}
+.modo-dia .menu-lateral { 
+  background-color: #f0f0f0; 
+  border-right: 3px solid #000; 
+}
+
+/* MODO NOCHE (Alto Contraste) */
+.modo-noche { 
+  background-color: #000000; 
+  color: #FFFF00; 
+}
+.modo-noche .barra-superior { 
+  background-color: #222; 
+  border-bottom: 5px solid #FFFF00; 
+}
+.modo-noche .menu-lateral { 
+  background-color: #111; 
+  border-right: 3px solid #FFFF00; 
+}
+/* Botones en modo noche */
+.modo-noche button { 
+  border-color: #FFFF00; 
+  color: #FFFF00; 
+  background: #000; 
+}
+.modo-noche input { 
+  background: #000; 
+  color: #fff; 
+  border-color: #FFFF00; 
+}
+
+/* =========================================
+   3. BARRA SUPERIOR (HEADER)
+   ========================================= */
+.barra-superior {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100px;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0 15px; z-index: 1000;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+}
+
+.sector-izq { flex: 1; display: flex; justify-content: flex-start; }
+.sector-centro { flex: 1; text-align: center; }
+.sector-der { flex: 1; display: flex; justify-content: flex-end; gap: 8px; }
+
+.logo { 
+  margin: 0; 
+  font-size: 2.5rem; 
+  font-weight: 900; 
+  letter-spacing: 3px; 
+}
+
+.btn-menu-hamburguesa {
+  font-size: 1.5rem; padding: 12px 20px; font-weight: 900;
+  background: #fff; border: 4px solid #000; border-radius: 10px; cursor: pointer;
+}
+
+.btn-control {
+  font-size: 1.4rem; font-weight: 900; padding: 10px 15px;
+  background: #fff; border: 3px solid #000; border-radius: 8px; cursor: pointer;
+}
+
+/* =========================================
+   4. MENÚ LATERAL
+   ========================================= */
+.fondo-oscuro {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.9); z-index: 1100;
+}
+
+.menu-lateral {
+  position: fixed; top: 0; left: -100%; 
+  width: 90%; max-width: 400px; height: 100vh; 
+  transition: left 0.3s ease; z-index: 1200; 
+  display: flex; flex-direction: column; 
+  overflow: hidden; 
+  padding-top: 10px; 
+}
+.menu-lateral.abierto { left: 0; }
+
+.cabecera-menu {
+  padding: 10px 20px; 
+  display: flex; justify-content: space-between; align-items: center;
+  border-bottom: 3px solid currentColor; font-weight: 900; font-size: 1.8rem;
+  flex-shrink: 0;
+}
+.btn-cerrar { 
+  background: none; border: 3px solid currentColor; 
+  padding: 5px 15px; font-weight: 900; font-size: 1.5rem; 
+}
+
+.contenido-menu-flexible { 
+  flex-grow: 1; 
+  display: flex; flex-direction: column; justify-content: space-evenly; 
+  padding: 10px 20px; 
+}
+
+.bloque-seccion { margin-bottom: 0px; }
+.bloque-seccion h3 { 
+  margin: 0 0 5px 0; border-bottom: 2px solid currentColor; font-size: 1.4rem; 
+}
+
+.grid-botones { display: flex; flex-direction: column; gap: 5px; }
+
+.grid-botones button {
+  display: block; width: 100%; text-align: left; 
+  padding: 8px 12px; font-size: 1.3rem; font-weight: bold; 
+  border-radius: 8px; border: 3px solid #555; background: #fff; cursor: pointer;
+}
+.modo-noche .grid-botones button { background: #222; }
+
+/* Destacado Cantabria */
+.bloque-seccion.destacado .grid-botones button { border-width: 4px; font-weight: 900; }
+
+.btn-volver-inicio {
+  width: 100%; padding: 15px; margin-top: 5px;
+  font-size: 1.3rem; font-weight: 900; background: #ccc; border: 4px solid #000;
+  flex-shrink: 0;
+}
+.modo-noche .btn-volver-inicio { background: #333; }
+
+/* =========================================
+   5. ZONA PRINCIPAL
+   ========================================= */
+.area-principal { max-width: 1000px; margin: 0 auto; padding: 20px; }
+
+.buscador-caja { display: flex; gap: 10px; margin-bottom: 40px; }
+.buscador-caja input {
+  flex-grow: 1; padding: 20px; font-size: 1.6rem; border: 4px solid #000; border-radius: 10px; font-weight: bold;
+}
+.btn-buscar { 
+  font-size: 1.4rem; font-weight: 900; padding: 0 30px; 
+  background: #ccc; border: 4px solid #000; 
+}
+
+.panel-voz { 
+  text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 2px solid #777; 
+}
+.panel-voz button { 
+  font-size: 1.6rem; padding: 15px 40px; margin: 0 10px; border-radius: 50px; 
+  border: 4px solid currentColor; background: transparent; font-weight: 900;
+}
+
+/* Visor de texto */
+.visor-texto { line-height: 1.5; font-weight: 500; }
+.bienvenida { text-align: center; font-size: 2rem; margin-top: 60px; font-weight: bold; }
+.mensaje-estado { font-size: 2.5rem; text-align: center; margin-top: 60px; font-weight: 900; }
+
+.titulo-periodico { 
+  text-align: center; border: 4px solid; padding: 15px; margin-bottom: 30px; 
+  font-size: 2.2rem; font-weight: 900; 
+}
+.lista-titulares { display: flex; flex-direction: column; gap: 20px; }
+.btn-titular {
+  text-align: left; padding: 25px; border: 3px solid currentColor; background: transparent;
+  border-radius: 12px; white-space: normal; cursor: pointer; font-weight: bold; line-height: 1.4;
+}
+.btn-titular:hover { background-color: rgba(255,255,255, 0.1); transform: scale(1.01); }
+
+img { max-width: 100%; height: auto; border: 2px solid #777; margin: 20px 0; display: block; }
+
+/* =========================================
+   6. FICHA ESQUELA (SOLUCIÓN DEFINITIVA DE VISIBILIDAD)
+   ========================================= */
+.tarjeta-esquela {
+    border: 6px solid #fff;
+    padding: 20px;
+    background-color: #222; /* Fondo gris oscuro para separar del negro puro */
+    border-radius: 15px;
+    margin-top: 20px;
+    text-align: center;
+}
+
+.modo-noche .tarjeta-esquela {
+    border-color: #FFFF00;
+    background-color: #000; /* Fondo negro en modo noche */
+    border: 4px solid #FFFF00;
+}
+
+.nombre-difunto {
+    font-size: 1.8em;
+    color: inherit;
+    margin-bottom: 20px;
+    font-weight: 900;
+}
+
+.separador-esquela {
+    border: 0; height: 2px; background: currentColor; margin: 20px 0;
+}
+
+.datos-esquela {
+    font-size: 1.1em;
+    line-height: 1.6;
+    text-align: left;
+    padding: 10px;
+}
+
+/* --- REGLA MAESTRA PARA QUE SE VEA EL TEXTO --- */
+/* Forzamos que CUALQUIER COSA dentro de datos-esquela sea amarilla en modo noche */
+.modo-noche .datos-esquela, 
+.modo-noche .datos-esquela * {
+    color: #FFFF00 !important;       /* Texto Amarillo */
+    background-color: #000 !important; /* Fondo Negro */
+    font-family: 'Verdana', sans-serif !important;
+    text-decoration: none !important;
+}
+
+.modo-dia .datos-esquela * {
+    color: #000 !important;
+    background-color: #fff !important;
+}
+
+/* Ocultar imágenes rotas o iconos que no sirven */
+.datos-esquela img {
+    display: none !important; /* Quitamos imágenes para evitar errores visuales */
+}
