@@ -3,7 +3,8 @@ import './App.css';
 import Asistente from './Asistente'; 
 
 // --- TU CLAVE API ---
-const GEMINI_API_KEY = "AIzaSyAIvRhIFlV1x_XzpJmLIfqdm2t0A6QNwlw"; 
+const GEMINI_API_KEY = process.env.REACT_APP_GEMINI_API_KEY;
+
 // --------------------
 
 function App() {
