@@ -1,7 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import './App.css';
 import Asistente from './Asistente';
-import MatchCard from './MatchCard';
+
 import logoApp from './images/silversoft_logo.png';
 
 // --- TU CLAVE API ---
@@ -12,7 +12,7 @@ const GEMINI_API_KEY = process.env.REACT_APP_GEMINI_API_KEY;
 
 function App() {
   const [busqueda, setBusqueda] = useState('');
-  const [modalAbierto, setModalAbierto] = useState(false);
+
   const [menuAbierto, setMenuAbierto] = useState(false);
   const [modoVista, setModoVista] = useState('inicio'); // inicio, lista, lectura
   const [tituloSeccion, setTituloSeccion] = useState('SilverSoft');
@@ -28,9 +28,7 @@ function App() {
   const [tamanoLetra, setTamanoLetra] = useState(22);
   const [contrasteAlto, setContasteAlto] = useState(true);
 
-  // Síntesis de voz
-  const synthRef = useRef(window.speechSynthesis);
-  const [hablando, setHablando] = useState(false);
+
 
   // --- DATOS DE PARTIDOS (AI) ---
   // const [partidos, setPartidos] = useState({ madrid: null, racing: null, valladolid: null });
