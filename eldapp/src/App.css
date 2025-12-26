@@ -1,31 +1,42 @@
 /* =========================================
    1. CONFIGURACIÓN BASE
    ========================================= */
-* { 
-  box-sizing: border-box; 
+* {
+  box-sizing: border-box;
 }
 
-body { 
-  margin: 0; 
-  font-family: 'Verdana', 'Arial', sans-serif; 
-  overflow-x: hidden; 
-  text-transform: uppercase; 
+body {
+  margin: 0;
+  font-family: 'Verdana', 'Arial', sans-serif;
+  overflow-x: hidden;
+  text-transform: uppercase;
 }
 
 /* Permitimos minúsculas en textos largos para facilitar lectura */
-.visor-texto div, .cuerpo-noticia, .visor-texto p, .datos-esquela {
-  text-transform: none; 
+.visor-texto div,
+.cuerpo-noticia,
+.visor-texto p,
+.datos-esquela {
+  text-transform: none;
 }
 
 /* Títulos y botones siempre en mayúsculas */
-.btn-titular, h1, h2, h3, h4, button, input, .nombre-difunto {
+.btn-titular,
+h1,
+h2,
+h3,
+h4,
+button,
+input,
+.nombre-difunto {
   text-transform: uppercase;
 }
 
 /* Contenedor Principal */
 .app-contenedor {
   min-height: 100vh;
-  padding-top: 100px; /* Hueco para la barra fija */
+  padding-top: 100px;
+  /* Hueco para la barra fija */
   transition: background 0.3s;
 }
 
@@ -33,226 +44,633 @@ body {
    2. COLORES Y TEMAS
    ========================================= */
 /* MODO DÍA */
-.modo-dia { 
-  background-color: #f4f4f4; 
-  color: #000; 
+.modo-dia {
+  background-color: #f4f4f4;
+  color: #000;
 }
-.modo-dia .barra-superior { 
-  background-color: #e0e0e0; 
-  border-bottom: 5px solid #000; 
+
+.modo-dia .barra-superior {
+  background-color: #e0e0e0;
+  border-bottom: 5px solid #000;
 }
-.modo-dia .menu-lateral { 
-  background-color: #f0f0f0; 
-  border-right: 3px solid #000; 
+
+.modo-dia .menu-lateral {
+  background-color: #f0f0f0;
+  border-right: 3px solid #000;
 }
 
 /* MODO NOCHE (Alto Contraste) */
-.modo-noche { 
-  background-color: #000000; 
-  color: #FFFF00; 
+.modo-noche {
+  background-color: #000000;
+  color: #FFFF00;
 }
-.modo-noche .barra-superior { 
-  background-color: #222; 
-  border-bottom: 5px solid #FFFF00; 
+
+.modo-noche .barra-superior {
+  background-color: #222;
+  border-bottom: 5px solid #FFFF00;
 }
-.modo-noche .menu-lateral { 
-  background-color: #111; 
-  border-right: 3px solid #FFFF00; 
+
+.modo-noche .menu-lateral {
+  background-color: #111;
+  border-right: 3px solid #FFFF00;
 }
+
 /* Botones en modo noche */
-.modo-noche button { 
-  border-color: #FFFF00; 
-  color: #FFFF00; 
-  background: #000; 
+.modo-noche button {
+  border-color: #FFFF00;
+  color: #FFFF00;
+  background: #000;
 }
-.modo-noche input { 
-  background: #000; 
-  color: #fff; 
-  border-color: #FFFF00; 
+
+.modo-noche input {
+  background: #000;
+  color: #fff;
+  border-color: #FFFF00;
 }
 
 /* =========================================
    3. BARRA SUPERIOR (HEADER)
    ========================================= */
 .barra-superior {
-  position: fixed; top: 0; left: 0; width: 100%; height: 100px;
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 0 15px; z-index: 1000;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 15px;
+  z-index: 1000;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
 }
 
-.sector-izq { flex: 1; display: flex; justify-content: flex-start; }
-.sector-centro { flex: 1; text-align: center; }
-.sector-der { flex: 1; display: flex; justify-content: flex-end; gap: 8px; }
+.sector-izq {
+  flex: 1;
+  display: flex;
+  justify-content: flex-start;
+  gap: 15px;
+  /* Added gap */
+  align-items: center;
+  /* Ensure vertical alignment */
+}
 
-.logo { 
-  margin: 0; 
-  font-size: 2.5rem; 
-  font-weight: 900; 
-  letter-spacing: 3px; 
+.sector-centro {
+  flex: 1;
+  text-align: center;
+}
+
+.sector-der {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.logo {
+  margin: 0;
+  font-size: 2.5rem;
+  font-weight: 900;
+  letter-spacing: 3px;
 }
 
 .btn-menu-hamburguesa {
-  font-size: 1.5rem; padding: 12px 20px; font-weight: 900;
-  background: #fff; border: 4px solid #000; border-radius: 10px; cursor: pointer;
+  font-size: 1.8rem;
+  /* Increased size */
+  padding: 15px 25px;
+  /* Increased padding */
+  font-weight: 900;
+  background: #9b59b6;
+  /* Purple */
+  color: white;
+  /* White text for contrast */
+  border: 4px solid #000;
+  border-radius: 10px;
+  cursor: pointer;
+  min-width: 140px;
+  /* Ensure wide clickable area */
+  text-align: center;
 }
 
 .btn-control {
-  font-size: 1.4rem; font-weight: 900; padding: 10px 15px;
-  background: #fff; border: 3px solid #000; border-radius: 8px; cursor: pointer;
+  font-size: 1.8rem;
+  /* Increased size */
+  font-weight: 900;
+  padding: 12px 20px;
+  /* Increased padding */
+  background: #fff;
+  border: 3px solid #000;
+  border-radius: 8px;
+  cursor: pointer;
+  min-width: 70px;
+  /* Ensure wide clickable area for + / - */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* =========================================
    4. MENÚ LATERAL
    ========================================= */
 .fondo-oscuro {
-  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(0,0,0,0.9); z-index: 1100;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 1100;
 }
 
 .menu-lateral {
-  position: fixed; top: 0; left: -100%; 
-  width: 90%; max-width: 400px; height: 100vh; 
-  transition: left 0.3s ease; z-index: 1200; 
-  display: flex; flex-direction: column; 
-  overflow: hidden; 
-  padding-top: 10px; 
+  position: fixed;
+  top: 0;
+  left: -100%;
+  width: 90%;
+  max-width: 400px;
+  height: 100vh;
+  transition: left 0.3s ease;
+  z-index: 1200;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding-top: 10px;
 }
-.menu-lateral.abierto { left: 0; }
+
+.menu-lateral.abierto {
+  left: 0;
+}
 
 .cabecera-menu {
-  padding: 10px 20px; 
-  display: flex; justify-content: space-between; align-items: center;
-  border-bottom: 3px solid currentColor; font-weight: 900; font-size: 1.8rem;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 3px solid currentColor;
+  font-weight: 900;
+  font-size: 1.8rem;
   flex-shrink: 0;
 }
-.btn-cerrar { 
-  background: none; border: 3px solid currentColor; 
-  padding: 5px 15px; font-weight: 900; font-size: 1.5rem; 
+
+.btn-cerrar {
+  background: #c0392b;
+  /* Rojo */
+  color: white;
+  border: 3px solid #000;
+  padding: 5px 15px;
+  font-weight: 900;
+  font-size: 1.5rem;
+  border-radius: 8px;
 }
 
-.contenido-menu-flexible { 
-  flex-grow: 1; 
-  display: flex; flex-direction: column; justify-content: space-evenly; 
-  padding: 10px 20px; 
+.contenido-menu-flexible {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  padding: 10px 20px;
 }
 
-.bloque-seccion { margin-bottom: 0px; }
-.bloque-seccion h3 { 
-  margin: 0 0 5px 0; border-bottom: 2px solid currentColor; font-size: 1.4rem; 
+.bloque-seccion {
+  margin-bottom: 0px;
 }
 
-.grid-botones { display: flex; flex-direction: column; gap: 5px; }
+.bloque-seccion h3 {
+  margin: 0 0 5px 0;
+  border-bottom: 2px solid currentColor;
+  font-size: 1.4rem;
+}
+
+.grid-botones {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
 
 .grid-botones button {
-  display: block; width: 100%; text-align: left; 
-  padding: 8px 12px; font-size: 1.3rem; font-weight: bold; 
-  border-radius: 8px; border: 3px solid #555; background: #fff; cursor: pointer;
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 8px 12px;
+  font-size: 1.3rem;
+  font-weight: bold;
+  border-radius: 8px;
+  border: 3px solid #555;
+  background: #fff;
+  cursor: pointer;
 }
-.modo-noche .grid-botones button { background: #222; }
+
+.modo-noche .grid-botones button {
+  background: #222;
+  border-color: #FFFF00;
+  /* Borde amarillo por defecto */
+}
 
 /* Destacado Cantabria */
-.bloque-seccion.destacado .grid-botones button { border-width: 4px; font-weight: 900; }
+.bloque-seccion.destacado .grid-botones button {
+  border-width: 4px;
+  font-weight: 900;
+  border-color: #e67e22 !important;
+  /* Naranja para Cantabria */
+}
 
 .btn-volver-inicio {
-  width: 100%; padding: 15px; margin-top: 5px;
-  font-size: 1.3rem; font-weight: 900; background: #ccc; border: 4px solid #000;
+  width: 100%;
+  padding: 15px;
+  margin-top: 5px;
+  font-size: 1.3rem;
+  font-weight: 900;
+  background: #ccc;
+  border: 4px solid #000;
   flex-shrink: 0;
 }
-.modo-noche .btn-volver-inicio { background: #333; }
+
+.modo-noche .btn-volver-inicio {
+  background: #333;
+  color: #fff;
+}
 
 /* =========================================
    5. ZONA PRINCIPAL
    ========================================= */
-.area-principal { max-width: 1000px; margin: 0 auto; padding: 20px; }
+.area-principal {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+}
 
-.buscador-caja { display: flex; gap: 10px; margin-bottom: 40px; }
+.buscador-caja {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 40px;
+}
+
 .buscador-caja input {
-  flex-grow: 1; padding: 20px; font-size: 1.6rem; border: 4px solid #000; border-radius: 10px; font-weight: bold;
-}
-.btn-buscar { 
-  font-size: 1.4rem; font-weight: 900; padding: 0 30px; 
-  background: #ccc; border: 4px solid #000; 
+  flex-grow: 1;
+  padding: 20px;
+  font-size: 1.6rem;
+  border: 4px solid #000;
+  border-radius: 10px;
+  font-weight: bold;
 }
 
-.panel-voz { 
-  text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 2px solid #777; 
+.btn-buscar {
+  font-size: 1.4rem;
+  font-weight: 900;
+  padding: 0 30px;
+  background: #3498db;
+  /* Azul */
+  color: white;
+  border: 4px solid #000;
+  border-radius: 10px;
+  cursor: pointer;
 }
-.panel-voz button { 
-  font-size: 1.6rem; padding: 15px 40px; margin: 0 10px; border-radius: 50px; 
-  border: 4px solid currentColor; background: transparent; font-weight: 900;
+
+.panel-voz {
+  text-align: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #777;
+}
+
+.panel-voz button {
+  font-size: 1.6rem;
+  padding: 15px 40px;
+  margin: 0 10px;
+  border-radius: 50px;
+  border: 4px solid #000;
+  background: #000;
+  color: #FFFF00;
+  /* Default high contrast */
+  font-weight: 900;
+  cursor: pointer;
+}
+
+/* Colores específicos para botones de voz */
+.panel-voz button:first-child {
+  /* LEER PANTALLA */
+  border-color: #2ecc71;
+  color: #2ecc71;
+}
+
+.panel-voz button:last-child {
+  /* PARAR */
+  border-color: #e74c3c;
+  color: #e74c3c;
 }
 
 /* Visor de texto */
-.visor-texto { line-height: 1.5; font-weight: 500; }
-.bienvenida { text-align: center; font-size: 2rem; margin-top: 60px; font-weight: bold; }
-.mensaje-estado { font-size: 2.5rem; text-align: center; margin-top: 60px; font-weight: 900; }
-
-.titulo-periodico { 
-  text-align: center; border: 4px solid; padding: 15px; margin-bottom: 30px; 
-  font-size: 2.2rem; font-weight: 900; 
+.visor-texto {
+  line-height: 1.5;
+  font-weight: 500;
 }
-.lista-titulares { display: flex; flex-direction: column; gap: 20px; }
+
+.bienvenida {
+  text-align: center;
+  font-size: 2rem;
+  margin-top: 60px;
+  font-weight: bold;
+}
+
+.mensaje-estado {
+  font-size: 2.5rem;
+  text-align: center;
+  margin-top: 60px;
+  font-weight: 900;
+}
+
+.titulo-periodico {
+  text-align: center;
+  border: 4px solid;
+  padding: 15px;
+  margin-bottom: 30px;
+  font-size: 2.2rem;
+  font-weight: 900;
+}
+
+.lista-titulares {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
 .btn-titular {
-  text-align: left; padding: 25px; border: 3px solid currentColor; background: transparent;
-  border-radius: 12px; white-space: normal; cursor: pointer; font-weight: bold; line-height: 1.4;
+  text-align: left;
+  padding: 25px;
+  border: 3px solid currentColor;
+  background: transparent;
+  border-radius: 12px;
+  white-space: normal;
+  cursor: pointer;
+  font-weight: bold;
+  line-height: 1.4;
+  display: flex;
+  align-items: center;
+  gap: 15px;
 }
-.btn-titular:hover { background-color: rgba(255,255,255, 0.1); transform: scale(1.01); }
 
-img { max-width: 100%; height: auto; border: 2px solid #777; margin: 20px 0; display: block; }
+.btn-titular:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: scale(1.01);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  border: 2px solid #777;
+  margin: 20px 0;
+  display: block;
+}
 
 /* =========================================
    6. FICHA ESQUELA (SOLUCIÓN DEFINITIVA DE VISIBILIDAD)
    ========================================= */
 .tarjeta-esquela {
-    border: 6px solid #fff;
-    padding: 20px;
-    background-color: #222; /* Fondo gris oscuro para separar del negro puro */
-    border-radius: 15px;
-    margin-top: 20px;
-    text-align: center;
+  border: 6px solid #fff;
+  padding: 20px;
+  background-color: #222;
+  /* Fondo gris oscuro para separar del negro puro */
+  border-radius: 15px;
+  margin-top: 20px;
+  text-align: center;
 }
 
 .modo-noche .tarjeta-esquela {
-    border-color: #FFFF00;
-    background-color: #000; /* Fondo negro en modo noche */
-    border: 4px solid #FFFF00;
+  border-color: #FFFF00;
+  background-color: #000;
+  /* Fondo negro en modo noche */
+  border: 4px solid #FFFF00;
 }
 
 .nombre-difunto {
-    font-size: 1.8em;
-    color: inherit;
-    margin-bottom: 20px;
-    font-weight: 900;
+  font-size: 1.8em;
+  color: inherit;
+  margin-bottom: 20px;
+  font-weight: 900;
 }
 
 .separador-esquela {
-    border: 0; height: 2px; background: currentColor; margin: 20px 0;
+  border: 0;
+  height: 2px;
+  background: currentColor;
+  margin: 20px 0;
 }
 
 .datos-esquela {
-    font-size: 1.1em;
-    line-height: 1.6;
-    text-align: left;
-    padding: 10px;
+  font-size: 1.1em;
+  line-height: 1.6;
+  text-align: left;
+  padding: 10px;
 }
 
 /* --- REGLA MAESTRA PARA QUE SE VEA EL TEXTO --- */
 /* Forzamos que CUALQUIER COSA dentro de datos-esquela sea amarilla en modo noche */
-.modo-noche .datos-esquela, 
+.modo-noche .datos-esquela,
 .modo-noche .datos-esquela * {
-    color: #FFFF00 !important;       /* Texto Amarillo */
-    background-color: #000 !important; /* Fondo Negro */
-    font-family: 'Verdana', sans-serif !important;
-    text-decoration: none !important;
+  color: #FFFF00 !important;
+  /* Texto Amarillo */
+  background-color: #000 !important;
+  /* Fondo Negro */
+  font-family: 'Verdana', sans-serif !important;
+  text-decoration: none !important;
 }
 
 .modo-dia .datos-esquela * {
-    color: #000 !important;
-    background-color: #fff !important;
+  color: #000 !important;
+  background-color: #fff !important;
 }
 
 /* Ocultar imágenes rotas o iconos que no sirven */
 .datos-esquela img {
-    display: none !important; /* Quitamos imágenes para evitar errores visuales */
+  display: none !important;
+  /* Quitamos imágenes para evitar errores visuales */
+}
+
+/* =========================================
+   7. RESPONSIVE MOBILE
+   ========================================= */
+@media (max-width: 768px) {
+
+  /* Header más compacto */
+  .barra-superior {
+    height: auto;
+    min-height: 80px;
+    padding: 10px;
+    flex-wrap: wrap;
+  }
+
+  .sector-centro {
+    order: -1;
+    /* Logo arriba del todo si hace falta, o ajustar según prefiera */
+    width: 100%;
+    margin-bottom: 5px;
+  }
+
+  .logo {
+    font-size: 1.8rem;
+  }
+
+  .sector-izq,
+  .sector-der {
+    flex: 1;
+    justify-content: center;
+  }
+
+  /* Menú pantalla completa o casi */
+  .menu-lateral {
+    width: 85%;
+  }
+
+  /* Botones más grandes para dedos */
+  .btn-menu-hamburguesa,
+  .btn-control {
+    padding: 15px 20px;
+  }
+
+  /* Buscador en columna */
+  .buscador-caja {
+    flex-direction: column;
+  }
+
+  .buscador-caja input {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .btn-buscar {
+    width: 100%;
+    padding: 15px;
+  }
+
+  /* Textos legibles */
+  .bienvenida {
+    font-size: 1.5rem;
+  }
+
+  .mensaje-estado {
+    font-size: 1.8rem;
+  }
+
+  /* Botones titulares full width */
+  .btn-titular {
+    width: 100%;
+    font-size: 1.4rem !important;
+    /* Forzar tamaño legible */
+  }
+
+  /* Ajuste panel voz */
+  .panel-voz button {
+    display: block;
+    width: 100%;
+    margin: 10px 0;
+  }
+
+  /* Ajuste imagen logo en header */
+  .sector-centro img {
+    height: 60px !important;
+    /* Reducir un poco en móvil */
+  }
+}
+
+/* MatchCard Styles */
+.match-card-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 20px;
+  width: 100%;
+  max-width: 90%;
+  /* Much wider */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.match-card {
+  background-color: #000;
+  /* Pure black for high contrast */
+  border: 4px solid #fff;
+  /* High contrast border */
+  border-radius: 12px;
+  padding: 10px 20px;
+  /* Reduced vertical padding */
+  color: #fff;
+  font-family: 'Roboto', sans-serif;
+}
+
+.match-header {
+  font-size: 1.2rem;
+  color: #ffff00;
+  /* Bright yellow for visibility */
+  margin-bottom: 8px;
+  /* Tighter spacing */
+  text-align: left;
+  font-weight: 900;
+  border-bottom: 2px solid #555;
+  padding-bottom: 5px;
+}
+
+.competition-name {
+  color: #ffff00;
+}
+
+.match-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.teams-column {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  /* Tighter spacing between teams */
+  flex: 2;
+  /* more space for names */
+}
+
+.team-row {
+  display: flex;
+  align-items: center;
+}
+
+.team-name {
+  font-size: 2rem;
+  /* Massive text */
+  font-weight: 900;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.divider-vertical {
+  width: 4px;
+  /* Thicker divider */
+  background-color: #fff;
+  height: 60px;
+  margin: 0 15px;
+}
+
+.time-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 120px;
+  text-align: center;
+}
+
+.match-date {
+  font-size: 1.2rem;
+  color: #ccc;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-bottom: 0;
+}
+
+.match-time {
+  font-size: 2.2rem;
+  /* Massive time */
+  font-weight: 900;
+  color: #ffff00;
+  /* Highlight time in yellow */
 }
