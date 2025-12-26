@@ -6,8 +6,7 @@ import logoApp from './images/silversoft_logo.png';
 
 // --- TU CLAVE API ---
 const GEMINI_API_KEY = process.env.REACT_APP_GEMINI_API_KEY;
-console.log("KEY:", GEMINI_API_KEY);
-console.log("LEN:", (GEMINI_API_KEY || "").length);
+
 
 // --------------------
 
